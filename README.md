@@ -2,10 +2,6 @@
 
 > 基于超星学习通满分助手二次开发，集成DeepSeek/OpenAI/Kimi等多模型AI答题能力，支持全题型自动搜题填答案，解放双手！
 
-![版本](https://img.shields.io/badge/version-2.1.8-blue.svg)
-![油猴脚本](https://img.shields.io/badge/userscript-Tampermonkey-orange.svg)
-![许可证](https://img.shields.io/badge/license-MIT-green.svg)
-
 ## 📖 项目介绍
 
 这是一个针对**超星学习通（超星泛雅/学习通APP网页版）**的油猴脚本，在原有满分助手的基础上进行二次开发，集成了主流大语言模型API，实现了：
@@ -53,13 +49,13 @@
 
 ## 🤖 支持的AI模型
 
-| 模型 | API地址 | 模型名称 | 备注 |
-|------|---------|----------|------|
-| DeepSeek | `https://api.deepseek.com/v1` | `deepseek-chat` | 推荐，性价比高 |
-| OpenAI | `https://api.openai.com/v1` | `gpt-3.5-turbo` | 效果好，价格较高 |
-| Kimi (月之暗面) | `https://api.moonshot.cn/v1` | `moonshot-v1-8k` | 长文本能力强 |
-| 智谱GLM | `https://open.bigmodel.cn/api/paas/v4` | `glm-4-flash` | 免费额度多 |
-| 通义千问 | `https://dashscope.aliyuncs.com/compatible-mode/v1` | `qwen-turbo` | 阿里云出品 |
+| 模型 | API地址 | 模型名称 |
+|------|---------|----------|
+| DeepSeek | `https://api.deepseek.com/v1` | `deepseek-chat` |
+| OpenAI | `https://api.openai.com/v1` | `chatgpt` |
+| Kimi (月之暗面) | `https://api.moonshot.cn/v1` | `moonshot-chat` |
+| 智谱GLM | `https://open.bigmodel.cn/api/paas/v4` | `glm-chat` |
+| 通义千问 | `https://dashscope.aliyuncs.com/compatible-mode/v1` | `qwen-chat` |
 
 ## 🚀 安装方法
 
@@ -109,24 +105,24 @@
 
 ## ❓ 常见问题
 
-### Q: 为什么没有看到悬浮按钮？
-A: 请确保：
+### 为什么没有看到悬浮按钮？
+请确保：
 1. 脚本已启用
 2. 页面是超星学习通的域名（chaoxing.com等）
 3. 刷新页面
 
-### Q: AI答题不生效？
-A: 请检查：
+### AI答题不生效？
+请检查：
 1. 是否开启了"启用AI答题"开关
 2. API Key是否正确
 3. API地址是否正确
 4. 控制台（F12）是否有错误信息
 
-### Q: 多选题选不对？
-A: AI回答的格式可能不规范，可以在配置里调整提示词，或者手动检查。
+### 多选题选不对？
+AI回答的格式可能不规范，可以在配置里调整提示词，或者手动检查。
 
-### Q: 填空题填不对？
-A: 确保AI按"第一空：xxx\n第二空：xxx"的格式回答，脚本会自动拆分。
+### 填空题填不对？
+确保AI按"第一空：xxx\n第二空：xxx"的格式回答，脚本会自动拆分。
 
 ## 📄 更新日志
 
