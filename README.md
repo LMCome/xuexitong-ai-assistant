@@ -69,14 +69,20 @@
 - **Firefox**：[Violentmonkey（暴力猴）](https://violentmonkey.github.io/)
 
 ### 第二步：安装脚本
+#### 方法一：直接安装（推荐）
 点击下面的链接，会自动弹出油猴安装确认页面：
 
-👉 [**点击安装学习通AI满分助手**](https://raw.githubusercontent.com/LMCome/xuexitong-ai-assistant/main/xuexitong-ai-assistant.user.js)
+👉 [**点击安装学习通AI满分助手**](https://cdn.jsdelivr.net/gh/LMCome/xuexitong-ai-assistant@main/xuexitong-ai-assistant.user.js)
 
-或者：
-1. 下载 `xuexitong-ai-assistant.user.js` 文件
-2. 直接拖入浏览器窗口
-3. 油猴扩展会自动识别并弹出安装页面
+> 💡 如果加载卡住，可以等几秒，或者用方法二手动安装。
+
+#### 方法二：手动安装（最稳定）
+1. 点击下载脚本：[xuexitong-ai-assistant.user.js](https://github.com/LMCome/xuexitong-ai-assistant/raw/main/xuexitong-ai-assistant.user.js)
+2. 打开油猴扩展的仪表盘
+3. 点击"+"号新建脚本
+4. 把原来的内容全部删除
+5. 把下载的脚本内容全部复制粘贴进去
+6. 按 `Ctrl+S` 保存
 
 ### 第三步：配置AI API
 1. 打开任意超星学习通页面
@@ -124,6 +130,9 @@ A: 请检查：
 
 ### Q: 多选题选不对？
 A: AI回答的格式可能不规范，可以在配置里调整提示词，或者手动检查。
+
+### Q: 安装时一直卡在"正在加载脚本数据"？
+A: 这是因为脚本里引用了多个外部CDN资源（Vue、Element Plus等），油猴扩展在预加载这些资源。请耐心等待，或者用上面的**方法二：手动安装**，把脚本内容复制粘贴进去，跳过预加载步骤。
 
 ## 📄 更新日志
 
