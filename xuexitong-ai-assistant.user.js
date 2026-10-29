@@ -1,10 +1,12 @@
 // ==UserScript==
 // @name         学习通AI助手
 // @namespace    askAuto
-// @version      2.1.8
+// @version      2.1.9
 // @author       XZS
 // @description  学习通AI答题助手，支持DeepSeek/OpenAI/Kimi/智谱GLM/通义千问多模型一键接入
 // @icon         https://vitejs.dev/logo.svg
+// @updateURL    https://cdn.jsdelivr.net/gh/LMCome/xuexitong-ai-assistant@main/xuexitong-ai-assistant.user.js
+// @downloadURL   https://cdn.jsdelivr.net/gh/LMCome/xuexitong-ai-assistant@main/xuexitong-ai-assistant.user.js
 // @match        *://*.chaoxing.com/*
 // @match        *://*.edu.cn/*
 // @match        *://*.nbdlib.cn/*
@@ -28,6 +30,8 @@
 // @connect      api.moonshot.cn
 // @connect      open.bigmodel.cn
 // @connect      dashscope.aliyuncs.com
+// @connect      cdn.jsdelivr.net
+// @connect      raw.githubusercontent.com
 // @grant        GM_addStyle
 // @grant        GM_getResourceText
 // @grant        GM_getValue
@@ -826,7 +830,7 @@
 	var _hoisted_25 = { class: "mf-panel-footer" };
 	var _hoisted_26 = { class: "mf-footer-status" };
 	var _hoisted_27 = (0, vue.createElementVNode)("i", null, null, -1);
-	var _hoisted_28 = (0, vue.createElementVNode)("span", { class: "mf-version" }, "v2.1.8 AI", -1);
+	var _hoisted_28 = (0, vue.createElementVNode)("span", { class: "mf-version" }, "v2.1.9 AI", -1);
 	var _hoisted_29 = ["aria-label", "title"];
 	var _hoisted_30 = { class: "mf-launcher-icon" };
 	var _sfc_main = {
@@ -3421,9 +3425,69 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 				await cxModel2.exam(), cxModel2.askStore.log("脚本初始化成功！", "success");
 		}
 	}
+	// ===== 自动更新检查（补充层：油猴原生 @updateURL 负责静默更新，本模块负责发现新版时弹出提示）=====
+	const UPDATE_CHECK_URL = "https://cdn.jsdelivr.net/gh/LMCome/xuexitong-ai-assistant@main/xuexitong-ai-assistant.user.js";
+	function compareScriptVersion(a, b) {
+		var pa = String(a).split(".").map(function(x) { return parseInt(x, 10) || 0; });
+		var pb = String(b).split(".").map(function(x) { return parseInt(x, 10) || 0; });
+		var len = Math.max(pa.length, pb.length);
+		for (var i = 0; i < len; i++) {
+			var diff = (pa[i] || 0) - (pb[i] || 0);
+			if (diff !== 0) return diff;
+		}
+		return 0;
+	}
+	function showUpdateTip(remoteVer) {
+		try {
+			if (document.getElementById("xxai-update-tip")) return;
+			var bar = document.createElement("div");
+			bar.id = "xxai-update-tip";
+			bar.textContent = "发现新版本 v" + remoteVer + "，点击一键更新";
+			bar.style.cssText = "position:fixed;right:16px;bottom:84px;z-index:2147483001;background:#16856c;color:#fff;padding:9px 15px;border-radius:20px;font-size:12px;cursor:pointer;box-shadow:0 4px 16px rgba(21,59,39,.28);font-family:-apple-system,Microsoft YaHei,sans-serif;";
+			bar.onmouseenter = function() { bar.style.background = "#106850"; };
+			bar.onmouseleave = function() { bar.style.background = "#16856c"; };
+			bar.onclick = function() {
+				try { _unsafeWindow.open(UPDATE_CHECK_URL, "_blank"); } catch (e) { window.open(UPDATE_CHECK_URL, "_blank"); }
+				bar.remove();
+			};
+			document.body.appendChild(bar);
+			setTimeout(function() { if (bar.parentNode) bar.remove(); }, 10 * 60 * 1000);
+		} catch (e) { console.warn("更新提示渲染失败", e); }
+	}
+	function checkScriptUpdate() {
+		try {
+			if (window.top !== window) return; // 只在顶层窗口检查，避免 iframe 重复注入
+			var last = Number(_GM_getValue("xxai:updateCheckTime", 0) || 0);
+			var now = Date.now();
+			if (now - last < 6 * 60 * 60 * 1000) return; // 6 小时内不重复请求
+			_GM_setValue("xxai:updateCheckTime", now);
+			_GM_xmlhttpRequest({
+				method: "GET",
+				url: UPDATE_CHECK_URL + "?t=" + now,
+				timeout: 15000,
+				onload: function(res) {
+					try {
+						var head = (res.responseText || "").slice(0, 3000);
+						var m = head.match(/\/\/ @version\s+([0-9]+\.[0-9]+\.[0-9]+)/);
+						if (!m) return;
+						var remoteVer = m[1];
+						var localVer = (_GM_info && _GM_info.script && _GM_info.script.version) || "0.0.0";
+						if (compareScriptVersion(remoteVer, localVer) > 0) {
+							console.log("检测到新版本:", localVer, "->", remoteVer);
+							showUpdateTip(remoteVer);
+						}
+					} catch (e) {}
+				},
+				onerror: function() {},
+				ontimeout: function() {}
+			});
+		} catch (e) { console.warn("更新检查失败", e); }
+	}
+	checkScriptUpdate();
+
 	var marker = "data-xuexitong-ai-initialized";
 	if (!document.documentElement.hasAttribute(marker)) {
-		document.documentElement.setAttribute(marker, "2.1.8");
+		document.documentElement.setAttribute(marker, (_GM_info && _GM_info.script && _GM_info.script.version) || "2.1.9");
 		const { formStore } = mountSettingsApp();
 		allowCopy();
 		await(start(formStore));
