@@ -4,7 +4,7 @@
 >
 > 基于超星学习通满分助手二次开发，题库命中则自动填答，未命中时调用 DeepSeek / OpenAI / Kimi / 智谱GLM / 通义千问补全答案。
 
-![版本](https://img.shields.io/badge/version-2.2.6-blue.svg)
+![版本](https://img.shields.io/badge/version-2.2.8-blue.svg)
 ![油猴脚本](https://img.shields.io/badge/userscript-Tampermonkey-orange.svg)
 ![许可证](https://img.shields.io/badge/license-MIT-green.svg)
 
@@ -250,6 +250,14 @@ flowchart TD
 ---
 
 ## 九、更新日志
+
+**v2.2.8（2026-10-29）**
+
+修复点击右上角悬浮球后设置面板无法展开、控制台报 `Cannot read properties of undefined (reading 'el')` 的问题：
+
+- 根因：AI 服务商下拉框（select）的 Vue 渲染子节点数组首项被误写为 `openBlock(true)`（其返回值为 undefined），Vue 优化挂载时把该空值当作虚拟节点读取 `.el` 直接抛错，导致整个设置面板渲染中断、单击悬浮球无反应
+- 修复：将下拉选项块用逗号表达式括号包裹为唯一合法子节点，移除非法空节点；分组标签、输入框与服务商下拉均恢复正常渲染
+- 回归验证：设置面板与服务商下拉（DeepSeek / OpenAI / Kimi / 智谱GLM / 通义千问）挂载正常、无渲染报错；题库与 AI 答题、自动填答逻辑未改动
 
 **v2.2.7（2026-10-29）**
 
