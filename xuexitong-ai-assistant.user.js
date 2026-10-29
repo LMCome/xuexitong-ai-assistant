@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         学习通AI助手
 // @namespace    askAuto
-// @version      2.2.2
+// @version      2.2.3
 // @author       XZS
 // @description  学习通AI答题助手，支持DeepSeek/OpenAI/Kimi/智谱GLM/通义千问多模型一键接入
 // @icon         https://vitejs.dev/logo.svg
-// @updateURL    https://raw.githubusercontent.com/LMCome/xuexitong-ai-assistant/main/xuexitong-ai-assistant.user.js
-// @downloadURL   https://raw.githubusercontent.com/LMCome/xuexitong-ai-assistant/main/xuexitong-ai-assistant.user.js
+// @updateURL    https://cdn.jsdelivr.net/gh/LMCome/xuexitong-ai-assistant@main/xuexitong-ai-assistant.user.js
+// @downloadURL   https://cdn.jsdelivr.net/gh/LMCome/xuexitong-ai-assistant@main/xuexitong-ai-assistant.user.js
 // @match        *://*.chaoxing.com/*
 // @match        *://*.edu.cn/*
 // @match        *://*.nbdlib.cn/*
@@ -852,7 +852,7 @@
 	var _hoisted_25 = { class: "mf-panel-footer" };
 	var _hoisted_26 = { class: "mf-footer-status" };
 	var _hoisted_27 = (0, vue.createElementVNode)("i", null, null, -1);
-	var _hoisted_28 = (0, vue.createElementVNode)("span", { class: "mf-version" }, "v2.2.2 AI", -1);
+	var _hoisted_28 = (0, vue.createElementVNode)("span", { class: "mf-version" }, "v2.2.3 AI", -1);
 	var _hoisted_29 = ["aria-label", "title"];
 	var _hoisted_30 = { class: "mf-launcher-icon" };
 	var _sfc_main = {
@@ -3476,7 +3476,12 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 	}
 	// ===== 更新检查（打开页面立即探测 + 常驻定时轮询；发现新版一键跳转安装页）=====
 		const UPDATE_CHECK_URL = "https://cdn.jsdelivr.net/gh/LMCome/xuexitong-ai-assistant@main/xuexitong-ai-assistant.user.js";
-		const UPDATE_PROBE_URL = "https://raw.githubusercontent.com/LMCome/xuexitong-ai-assistant/main/xuexitong-ai-assistant.user.js";
+		var PROBE_SOURCES = [
+			"https://fastly.jsdelivr.net/gh/LMCome/xuexitong-ai-assistant@main/xuexitong-ai-assistant.user.js",
+			"https://cdn.jsdelivr.net/gh/LMCome/xuexitong-ai-assistant@main/xuexitong-ai-assistant.user.js",
+			"https://gcore.jsdelivr.net/gh/LMCome/xuexitong-ai-assistant@main/xuexitong-ai-assistant.user.js",
+			"https://raw.githubusercontent.com/LMCome/xuexitong-ai-assistant/main/xuexitong-ai-assistant.user.js"
+		];
 		var UPDATE_POLL_INTERVAL = 10 * 60 * 1000;
 		function compareScriptVersion(a, b) {
 			var pa = String(a).split(".").map(function(x) { return parseInt(x, 10) || 0; });
@@ -3498,7 +3503,7 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 				main.textContent = "发现新版本 v" + remoteVer + "，点击安装更新";
 				main.style.cssText = "cursor:pointer;";
 				main.onclick = function() {
-					try { _unsafeWindow.open(UPDATE_PROBE_URL, "_blank"); } catch (e) { window.open(UPDATE_PROBE_URL, "_blank"); }
+					try { _unsafeWindow.open(UPDATE_CHECK_URL, "_blank"); } catch (e) { window.open(UPDATE_CHECK_URL, "_blank"); }
 				};
 				var close = document.createElement("span");
 				close.textContent = "×";
@@ -3514,7 +3519,7 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 				if (window.top !== window) return;
 				var localVer = (_GM_info && _GM_info.script && _GM_info.script.version) || "0.0.0";
 				var notified = String(_GM_getValue("xxai:notifiedVer", "") || "");
-				var handled = false;
+				var handled = false, srcIdx = 0;
 				function handle(res) {
 					try {
 						var head = (res.responseText || "").slice(0, 3000);
@@ -3532,18 +3537,23 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 						}
 					} catch (e) {}
 				}
-				function request(url) {
+				function tryNextSource() {
+					if (handled || srcIdx >= PROBE_SOURCES.length) return;
+					var url = PROBE_SOURCES[srcIdx++];
 					_GM_xmlhttpRequest({
 						method: "GET",
 						url: url + "?t=" + Date.now(),
-						timeout: 15000,
-						onload: function(res) { if (!handled) { handled = true; handle(res); } },
-						onerror: function() {},
-						ontimeout: function() {}
+						timeout: 8000,
+						onload: function(res) {
+							if (handled) return;
+							if (res.status && res.status !== 200) { tryNextSource(); return; }
+							handled = true; handle(res);
+						},
+						onerror: function() { tryNextSource(); },
+						ontimeout: function() { tryNextSource(); }
 					});
 				}
-				request(UPDATE_PROBE_URL);
-				setTimeout(function() { if (!handled) request(UPDATE_CHECK_URL); }, 6000);
+				tryNextSource();
 			} catch (e) { console.warn("更新探测失败", e); }
 		}
 		probeUpdate();
@@ -3551,7 +3561,7 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 
 	var marker = "data-xuexitong-ai-initialized";
 	if (!document.documentElement.hasAttribute(marker)) {
-		document.documentElement.setAttribute(marker, (_GM_info && _GM_info.script && _GM_info.script.version) || "2.2.2");
+		document.documentElement.setAttribute(marker, (_GM_info && _GM_info.script && _GM_info.script.version) || "2.2.3");
 		const { formStore } = mountSettingsApp();
 		allowCopy();
 		await(start(formStore));
