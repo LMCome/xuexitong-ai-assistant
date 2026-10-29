@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         学习通AI助手
 // @namespace    askAuto
-// @version      2.1.9
+// @version      2.2.0
 // @author       XZS
 // @description  学习通AI答题助手，支持DeepSeek/OpenAI/Kimi/智谱GLM/通义千问多模型一键接入
 // @icon         https://vitejs.dev/logo.svg
@@ -32,6 +32,7 @@
 // @connect      dashscope.aliyuncs.com
 // @connect      cdn.jsdelivr.net
 // @connect      raw.githubusercontent.com
+// @connect      *
 // @grant        GM_addStyle
 // @grant        GM_getResourceText
 // @grant        GM_getValue
@@ -112,6 +113,10 @@
 		hideExam: false,
 		notice: "本脚本仅供学习交流使用，严禁用于商业用途，否则后果自负！"
 	};
+	/* ============================================================
+	 * 自定义增强模块（v2.2.0 稳定性更新）
+	 * AI 服务商预设 / AI 兜底答题 / 版本检查提示
+	 * ============================================================ */
 	var AI_PROVIDERS = [
 		{ name: "DeepSeek", baseURL: "https://api.deepseek.com/v1", model: "deepseek-chat", note: "国内直连" },
 		{ name: "OpenAI", baseURL: "https://api.openai.com/v1", model: "gpt-4o-mini", note: "需网络代理" },
@@ -847,7 +852,7 @@
 	var _hoisted_25 = { class: "mf-panel-footer" };
 	var _hoisted_26 = { class: "mf-footer-status" };
 	var _hoisted_27 = (0, vue.createElementVNode)("i", null, null, -1);
-	var _hoisted_28 = (0, vue.createElementVNode)("span", { class: "mf-version" }, "v2.1.9 AI", -1);
+	var _hoisted_28 = (0, vue.createElementVNode)("span", { class: "mf-version" }, "v2.2.0 AI", -1);
 	var _hoisted_29 = ["aria-label", "title"];
 	var _hoisted_30 = { class: "mf-launcher-icon" };
 	var _sfc_main = {
@@ -2977,11 +2982,16 @@
 	
 	async function getAnswerAI(questionData) {
 		const config = getConfig();
-		if (!config.gpt || !config.gptKey) return null;
+		if (!config.gpt) return null;
+	var rawKey = (config.gptKey || "").trim();
+	if (!rawKey) { console.warn("[AI] 未填写 API Key，跳过 AI 兜底"); return null; }
+	config.gptKey = rawKey;
 		
 		try {
 			const baseURL = config.gptBaseURL || "https://api.deepseek.com/v1";
 			const model = config.gptModel || "deepseek-chat";
+			var normalizedBase = (baseURL || "").replace(/\/+$/, "");
+			if (!/\/chat\/completions$/.test(normalizedBase)) normalizedBase += "/chat/completions";
 			
 			let systemPrompt = "你是一个学习助手，请根据题目给出准确答案。";
 			if (questionData.type === "4" || questionData.type === "5" || questionData.type === "6") {
@@ -3003,7 +3013,7 @@
 			const response = await new Promise((resolve, reject) => {
 				_GM_xmlhttpRequest({
 					method: "POST",
-					url: baseURL + "/chat/completions",
+					url: normalizedBase,
 					headers: {
 						"Content-Type": "application/json",
 						"Authorization": "Bearer " + config.gptKey
@@ -3024,6 +3034,11 @@
 				});
 			});
 			
+			const httpStatus = response.status || 0;
+			if (httpStatus && httpStatus !== 200) {
+				console.error("[AI] 接口返回异常状态:", httpStatus, (response.responseText || "").slice(0, 300));
+				return null;
+			}
 			const data = JSON.parse(response.responseText);
 			if (data.choices && data.choices[0] && data.choices[0].message) {
 				let answer = data.choices[0].message.content.trim();
@@ -3067,7 +3082,8 @@
 						
 						// 3. 再尝试匹配A/B/C/D字母（支持多选，如"ABD"）
 						if (matchedOptions.length === 0) {
-							const letterMatch = answer.match(/答案[是为:：]?\s*\**([A-Da-d]+)\**/);
+							let letterMatch = answer.match(/答案[是为:：]?\s*\**([A-Da-d]+)\**/);
+					if (!letterMatch) letterMatch = answer.match(/(?:^|[\s,，、:：;；])([A-Da-d]{1,4})(?=[\s,，、。.;；]|$)/);
 							if (letterMatch) {
 								const letters = letterMatch[1].toUpperCase().split("");
 								for (let i = 0; i < letters.length; i++) {
@@ -3093,9 +3109,16 @@
 				}
 				// 填空题：解析"第一空：xxx\n第二空：xxx"格式
 				if (questionData.type === "2") {
-					const fillMatch = answer.match(/第[一二三四五六七八九十\d]+空[：:]\s*(.*?)(?=\n第[一二三四五六七八九十\d]+空[：:]|$)/g);
+					var fillAnswers = null;
+					var fillMatch = answer.match(/第[一二三四五六七八九十\d]+空[：:]\s*(.*?)(?=\n第[一二三四五六七八九十\d]+空[：:]|$)/g);
 					if (fillMatch && fillMatch.length > 1) {
-						const fillAnswers = fillMatch.map(m => m.replace(/^第[一二三四五六七八九十\d]+空[：:]\s*/, "").trim());
+						fillAnswers = fillMatch.map(function(m){ return m.replace(/^第[一二三四五六七八九十\d]+空[：:]\s*/, "").trim(); });
+					} else {
+						var lines = answer.split(/\n+/).map(function(s){ return s.trim(); }).filter(Boolean);
+						var numbered = lines.map(function(s){ return s.replace(/^\s*\d+\s*[.、．]\s*/, "").replace(/^空\s*\d+\s*[：:、]?\s*/, "").trim(); }).filter(Boolean);
+						if (numbered.length >= 2) fillAnswers = numbered;
+					}
+					if (fillAnswers && fillAnswers.length > 1) {
 						console.log("AI填空题拆分:", fillAnswers);
 						return fillAnswers;
 					}
@@ -3129,6 +3152,15 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 		promises.push(aiPromise);
 		return Promise.all(promises);
 	};
+	var sanitizeAnswerText = function(text) {
+		if (text == null) return "";
+		var s = String(text);
+		s = s.replace(/<script[\s\S]*?<\/script>/gi, "");
+		s = s.replace(/on\w+\s*=\s*["'][^"']*["']/gi, "");
+		s = s.replace(/javascript\s*:/gi, "");
+		s = s.replace(/<[^>]+>/g, "");
+		return s.trim();
+	};
 	var fillAnswer = (answer, questionData, html, iframeWindow) => {
 		answer = answer.filter((item) => item.answer.length > 0), console.log(answer);
 		for (let i = 0; i < answer.length; i++) {
@@ -3150,9 +3182,9 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 				for (var i = 0; i < matchArr.length; i++) console.log((0, jquery.default)(html).find("li").eq(matchArr[i]), matchArr[i]), (0, jquery.default)(html).find("ul:eq(0) li :radio,:checkbox,textarea").eq(matchArr[i]).click(), (0, jquery.default)(html).find(".answerBg").eq(matchArr[i]).click(), (0, jquery.default)(html).find("li").eq(matchArr[i]).click();
 				return matchArr.length > 0 && answer;
 			case "3": return clearCurrent(html, iframeWindow), answer instanceof Array && (answer = answer[0]), (0, jquery.default)(html).find("ul:eq(0) li :radio,:checkbox,textarea").each(function() {
-				"true" == (0, jquery.default)(this).val() ? answer.match(/(^|,)(True|true|正确|是|对|√|T|ri)(,|$)/) && (0, jquery.default)(this).click() : answer.match(/(^|,)(False|false|错误|否|错|×|F|wr)(,|$)/) && (0, jquery.default)(this).click();
+				"true" == (0, jquery.default)(this).val() ? answer.match(/(^|,)(True|true|正确|对|√)(,|$)/) && (0, jquery.default)(this).click() : answer.match(/(^|,)(False|false|错误|错|×)(,|$)/) && (0, jquery.default)(this).click();
 			}), (0, jquery.default)(html).find(".answerBg").each(function() {
-				"true" == (0, jquery.default)(this).find(".num_option").attr("data") ? answer.match(/(^|,)(True|true|正确|是|对|√|T|ri)(,|$)/) && (0, jquery.default)(this).click() : answer.match(/(^|,)(False|false|错误|否|错|×|F|wr)(,|$)/) && (0, jquery.default)(this).click();
+				"true" == (0, jquery.default)(this).find(".num_option").attr("data") ? answer.match(/(^|,)(True|true|正确|对|√)(,|$)/) && (0, jquery.default)(this).click() : answer.match(/(^|,)(False|false|错误|错|×)(,|$)/) && (0, jquery.default)(this).click();
 			}), !!((0, jquery.default)(html).find("ul:eq(0) li :radio,:checkbox,textarea").is(":checked") || (0, jquery.default)(html).find(".check_answer").length > 0 || (0, jquery.default)(html).find(".check_answer_dx").length > 0) && answer;
 			case "2":
 			case "9":
@@ -3161,7 +3193,7 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 			case "6":
 			case "7": return (0, jquery.default)(html).find("textarea").length == answer.length && (clearCurrent(html, iframeWindow), (0, jquery.default)(html).find("textarea").each(function(index) {
 				iframeWindow.UE.getEditor((0, jquery.default)(this).attr("name")).ready(function() {
-					this.setContent(answer[index].replace(/第.空:/g, ""));
+					this.setContent(sanitizeAnswerText(answer[index].replace(/第[一二三四五六七八九十\d]*空[：:]?/g, "")));
 				});
 			}), answer);
 			default: return false;
@@ -3226,7 +3258,7 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 		async video(iframeWindow) {
 			this.askStore.reset(), this.askStore.task.name = "视频", this.askStore.task.video.status = 1, await waitElementLoaded(iframeWindow, "#video_html5_api"), console.log("视频加载完成");
 			const player = iframeWindow.videojs("video_html5_api"), playerButton = iframeWindow.document.querySelector(".vjs-big-play-button");
-			player.muted(true), player.playbackRate(16), player.play(), await new Promise((resolve) => {
+			player.muted(true), player.playbackRate(2), player.play(), await new Promise((resolve) => {
 				const intervalId = setInterval(() => {
 					"isUnFinishJob" in iframeWindow && iframeWindow.isUnFinishJob() ? player.paused() && playerButton?.click() : (clearInterval(intervalId), resolve());
 				}, 1e3), pauseBase = player.pause;
@@ -3249,7 +3281,7 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 				}
 				this.askStore.reset(), this.askStore.count = ques.length, this.askStore.task.name = "章节测验";
 				for (let i = 0; i < ques.length; i++) {
-					await sleep(this.defaultConfig.answerInterval), this.askStore.insert(ques[i]), this.askStore.task.work.inx = i;
+					this.defaultConfig = getConfig(); await sleep(this.defaultConfig.answerInterval), this.askStore.insert(ques[i]), this.askStore.task.work.inx = i;
 					let data = await getAnswers(ques[i], iframeWindow);
 					this.askStore.get(i).allAnswer = data;
 					let tmp = fillAnswer(data, ques[i], Timu[i], iframeWindow);
@@ -3271,7 +3303,7 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 				}
 				this.askStore.reset(), this.askStore.count = ques.length, this.askStore.task.name = "作业";
 				for (let i = 0; i < ques.length; i++) {
-					await sleep(this.defaultConfig.answerInterval), this.askStore.insert(ques[i]), this.askStore.task.work.inx = i;
+					this.defaultConfig = getConfig(); await sleep(this.defaultConfig.answerInterval), this.askStore.insert(ques[i]), this.askStore.task.work.inx = i;
 					let data = await getAnswers(ques[i]);
 					this.askStore.get(i).allAnswer = data;
 					let tmp = fillAnswer(data, ques[i], Timu[i], _unsafeWindow);
@@ -3504,7 +3536,7 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 
 	var marker = "data-xuexitong-ai-initialized";
 	if (!document.documentElement.hasAttribute(marker)) {
-		document.documentElement.setAttribute(marker, (_GM_info && _GM_info.script && _GM_info.script.version) || "2.1.9");
+		document.documentElement.setAttribute(marker, (_GM_info && _GM_info.script && _GM_info.script.version) || "2.2.0");
 		const { formStore } = mountSettingsApp();
 		allowCopy();
 		await(start(formStore));
