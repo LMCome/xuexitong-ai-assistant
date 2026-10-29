@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         学习通AI助手
 // @namespace    askAuto
-// @version      2.2.1
+// @version      2.2.2
 // @author       XZS
 // @description  学习通AI答题助手，支持DeepSeek/OpenAI/Kimi/智谱GLM/通义千问多模型一键接入
 // @icon         https://vitejs.dev/logo.svg
-// @updateURL    https://cdn.jsdelivr.net/gh/LMCome/xuexitong-ai-assistant@main/xuexitong-ai-assistant.user.js
-// @downloadURL   https://cdn.jsdelivr.net/gh/LMCome/xuexitong-ai-assistant@main/xuexitong-ai-assistant.user.js
+// @updateURL    https://raw.githubusercontent.com/LMCome/xuexitong-ai-assistant/main/xuexitong-ai-assistant.user.js
+// @downloadURL   https://raw.githubusercontent.com/LMCome/xuexitong-ai-assistant/main/xuexitong-ai-assistant.user.js
 // @match        *://*.chaoxing.com/*
 // @match        *://*.edu.cn/*
 // @match        *://*.nbdlib.cn/*
@@ -852,7 +852,7 @@
 	var _hoisted_25 = { class: "mf-panel-footer" };
 	var _hoisted_26 = { class: "mf-footer-status" };
 	var _hoisted_27 = (0, vue.createElementVNode)("i", null, null, -1);
-	var _hoisted_28 = (0, vue.createElementVNode)("span", { class: "mf-version" }, "v2.2.1 AI", -1);
+	var _hoisted_28 = (0, vue.createElementVNode)("span", { class: "mf-version" }, "v2.2.2 AI", -1);
 	var _hoisted_29 = ["aria-label", "title"];
 	var _hoisted_30 = { class: "mf-launcher-icon" };
 	var _sfc_main = {
@@ -3498,7 +3498,7 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 				main.textContent = "发现新版本 v" + remoteVer + "，点击安装更新";
 				main.style.cssText = "cursor:pointer;";
 				main.onclick = function() {
-					try { _unsafeWindow.open(UPDATE_CHECK_URL, "_blank"); } catch (e) { window.open(UPDATE_CHECK_URL, "_blank"); }
+					try { _unsafeWindow.open(UPDATE_PROBE_URL, "_blank"); } catch (e) { window.open(UPDATE_PROBE_URL, "_blank"); }
 				};
 				var close = document.createElement("span");
 				close.textContent = "×";
@@ -3551,7 +3551,7 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 
 	var marker = "data-xuexitong-ai-initialized";
 	if (!document.documentElement.hasAttribute(marker)) {
-		document.documentElement.setAttribute(marker, (_GM_info && _GM_info.script && _GM_info.script.version) || "2.2.1");
+		document.documentElement.setAttribute(marker, (_GM_info && _GM_info.script && _GM_info.script.version) || "2.2.2");
 		const { formStore } = mountSettingsApp();
 		allowCopy();
 		await(start(formStore));
