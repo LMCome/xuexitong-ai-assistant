@@ -102,17 +102,21 @@ flowchart TD
 
 ## 四、模型配置
 
-脚本兼容 OpenAI 接口格式，下表为常用 AI 模型的接入参数，在配置面板中按表填写即可：
+面板内「AI 服务商」为下拉选择，选定后自动填入接口地址与默认模型 ID，只需再填写 API Key；默认值均可手动修改。下表为各家接入参数参考：
 
-| 模型 | API 地址 | 模型名称 |
-|------|---------|---------|
-| DeepSeek | `https://api.deepseek.com/v1` | `deepseek-chat` |
-| OpenAI | `https://api.openai.com/v1` | `chatgpt` |
-| Kimi（月之暗面） | `https://api.moonshot.cn/v1` | `moonshot-chat` |
-| 智谱 GLM | `https://open.bigmodel.cn/api/paas/v4` | `glm-chat` |
-| 通义千问 | `https://dashscope.aliyuncs.com/compatible-mode/v1` | `qwen-chat` |
+| 服务商 | API 地址 | 默认模型 ID（请以实际为准） | 备注 |
+|------|---------|---------|------|
+| DeepSeek | `https://api.deepseek.com/v1` | `deepseek-chat` | 国内直连 |
+| OpenAI | `https://api.openai.com/v1` | `gpt-4o-mini` | 国内需代理 |
+| Kimi（月之暗面） | `https://api.moonshot.cn/v1` | `kimi-k3` | 国内直连 |
+| 智谱 GLM | `https://open.bigmodel.cn/api/paas/v4` | `glm-4-flash-250414` | 免费模型 |
+| 通义千问 | `https://dashscope.aliyuncs.com/compatible-mode/v1` | `qwen-plus` | 国内直连 |
 
+> 模型 ID 对应请求体中的 `model` 字段，必须填写官方真实模型 ID；模型会随官方版本迭代调整，请以各平台最新模型列表为准，填写错误会返回 `invalid model` / `model_not_found` 类报错。
+>
 > API Key 在各模型官方平台申请，仅保存在本机油猴存储中，不会上传到其他服务器。
+>
+> OpenAI 接口在国内网络通常无法直连，需要浏览器开启代理后使用；其余四家国内可直连。
 
 ---
 
@@ -150,7 +154,7 @@ flowchart TD
 2. 点击右下角绿色「满分助手」按钮
 3. 进入「设置 / 授权码」面板，切换到「AI答题」标签
 4. 开启「启用 AI 答题」
-5. 按上表填写 API 地址、模型名称与 API Key
+5. 在「AI 服务商」下拉选择对应厂商，确认自动带出的接口地址与模型 ID，填写 API Key
 6. 刷新页面后生效
 
 ---
@@ -175,9 +179,9 @@ flowchart TD
 ### AI 参数
 
 - 启用 AI 答题：题库无答案时自动调用模型
-- AI 服务名称：仅用于面板显示
-- API 地址：对应模型的基础 URL
-- 模型名称：对应模型的标识
+- AI 服务商：下拉选择厂商，选定后自动带出接口地址与默认模型 ID
+- API 地址：选择后自动填入，可手动修改
+- 模型名称：默认模型 ID，请以官方实际为准，可手动修改
 - API Key：对应平台申请的密钥
 
 ---
