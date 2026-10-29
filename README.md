@@ -4,7 +4,7 @@
 >
 > 基于超星学习通满分助手二次开发，题库命中则自动填答，未命中时调用 DeepSeek / OpenAI / Kimi / 智谱GLM / 通义千问补全答案。
 
-![版本](https://img.shields.io/badge/version-2.2.5-blue.svg)
+![版本](https://img.shields.io/badge/version-2.2.6-blue.svg)
 ![油猴脚本](https://img.shields.io/badge/userscript-Tampermonkey-orange.svg)
 ![许可证](https://img.shields.io/badge/license-MIT-green.svg)
 
@@ -246,6 +246,10 @@ flowchart TD
 ---
 
 ## 九、更新日志
+
+**v2.2.6（2026-10-29）**
+
+- 面板右下角版本角标由写死的静态文本改为运行时自动读取脚本头 `@version`；以后升级版本号只需维护头部一处，角标自动同步，不会再出现角标停留在旧版本号（如 v2.1.7）的情况
 
 **v2.2.5（2026-10-29）**
 
