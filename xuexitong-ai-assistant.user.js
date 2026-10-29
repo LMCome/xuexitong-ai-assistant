@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         学习通AI助手
 // @namespace    askAuto
-// @version      2.2.7
+// @version      2.2.8
 // @author       XZS
 // @description  学习通AI答题助手，支持DeepSeek/OpenAI/Kimi/智谱GLM/通义千问多模型一键接入
 // @icon         https://vitejs.dev/logo.svg
@@ -631,7 +631,7 @@
 									type: "checkbox",
 									role: "switch",
 									"aria-describedby": `mf-${field.name}-help`
-								}, null, 8, _hoisted_7$2)), [[vue.vModelCheckbox, draft[field.name]]]) : field.type === "select" ? ((0, vue.openBlock)(), (0, vue.createElementBlock)("select", {key: "sel-" + field.name, id: `mf-${field.name}`, class: "mf-input mf-select", "aria-describedby": `mf-${field.name}-help`, onChange: ($event) => onProviderChange($event.target.value)}, [(0, vue.openBlock)(true), (0, vue.createElementBlock)(vue.Fragment, null, (0, vue.renderList)(AI_PROVIDERS, (p) => {return (0, vue.createElementVNode)("option", {key: p.name, value: p.name, selected: draft[field.name] === p.name}, (0, vue.toDisplayString)(p.name), 8, ["selected"]);}), 128)])) : field.type === "number" ? (0, vue.withDirectives)(((0, vue.openBlock)(), (0, vue.createElementBlock)("input", {
+								}, null, 8, _hoisted_7$2)), [[vue.vModelCheckbox, draft[field.name]]]) : field.type === "select" ? ((0, vue.openBlock)(), (0, vue.createElementBlock)("select", {key: "sel-" + field.name, id: `mf-${field.name}`, class: "mf-input mf-select", "aria-describedby": `mf-${field.name}-help`, onChange: ($event) => onProviderChange($event.target.value)}, [((0, vue.openBlock)(true), (0, vue.createElementBlock)(vue.Fragment, null, (0, vue.renderList)(AI_PROVIDERS, (p) => {return (0, vue.createElementVNode)("option", {key: p.name, value: p.name, selected: draft[field.name] === p.name}, (0, vue.toDisplayString)(p.name), 8, ["selected"]);}), 128))])) : field.type === "number" ? (0, vue.withDirectives)(((0, vue.openBlock)(), (0, vue.createElementBlock)("input", {
 									key: 1,
 									id: `mf-${field.name}`,
 									"onUpdate:modelValue": ($event) => draft[field.name] = $event,
@@ -965,7 +965,7 @@
 							class: (0, vue.normalizeClass)(entry.type)
 						}, [_hoisted_18, (0, vue.createElementVNode)("div", null, [(0, vue.createElementVNode)("time", null, (0, vue.toDisplayString)(entry.time), 1), (0, vue.createElementVNode)("p", null, (0, vue.toDisplayString)(entry.msg), 1)])], 2);
 					}), 128))]))])) : ((0, vue.openBlock)(), (0, vue.createElementBlock)("section", _hoisted_19, _hoisted_24))], 64)) : (0, vue.createCommentVNode)("", true)]),
-					(0, vue.createElementVNode)("footer", _hoisted_25, [(0, vue.createElementVNode)("span", _hoisted_26, [_hoisted_27, (0, vue.createTextVNode)((0, vue.toDisplayString)(__props.taskMode && (0, vue.unref)(task).status ? (0, vue.unref)(task).status : "面板外可正常点击与滚动"), 1)]), (0, vue.createElementVNode)("span", { class: "mf-version" }, (0, vue.toDisplayString("v" + ((_GM_info && _GM_info.script && _GM_info.script.version) || "2.2.7")), 1))])
+					(0, vue.createElementVNode)("footer", _hoisted_25, [(0, vue.createElementVNode)("span", _hoisted_26, [_hoisted_27, (0, vue.createTextVNode)((0, vue.toDisplayString)(__props.taskMode && (0, vue.unref)(task).status ? (0, vue.unref)(task).status : "面板外可正常点击与滚动"), 1)]), (0, vue.createElementVNode)("span", { class: "mf-version" }, (0, vue.toDisplayString("v" + ((_GM_info && _GM_info.script && _GM_info.script.version) || "2.2.8")), 1))])
 				], 46, _hoisted_1), [[vue.vShow, visible.value]]), !visible.value ? ((0, vue.openBlock)(), (0, vue.createElementBlock)("button", {
 					key: 0,
 					ref_key: "launcher",
@@ -3562,7 +3562,7 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 
 	var marker = "data-xuexitong-ai-initialized";
 	if (!document.documentElement.hasAttribute(marker)) {
-		document.documentElement.setAttribute(marker, (_GM_info && _GM_info.script && _GM_info.script.version) || "2.2.7");
+		document.documentElement.setAttribute(marker, (_GM_info && _GM_info.script && _GM_info.script.version) || "2.2.8");
 		const { formStore } = mountSettingsApp();
 		allowCopy();
 		await(start(formStore));
