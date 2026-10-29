@@ -4,7 +4,7 @@
 >
 > 基于超星学习通满分助手二次开发，题库命中则自动填答，未命中时调用 DeepSeek / OpenAI / Kimi / 智谱GLM / 通义千问补全答案。
 
-![版本](https://img.shields.io/badge/version-2.2.4-blue.svg)
+![版本](https://img.shields.io/badge/version-2.2.5-blue.svg)
 ![油猴脚本](https://img.shields.io/badge/userscript-Tampermonkey-orange.svg)
 ![许可证](https://img.shields.io/badge/license-MIT-green.svg)
 
@@ -200,7 +200,7 @@ flowchart TD
 
 2. **脚本内版本检查（补充，响应更快）**
    - 打开学习通页面时立即读取远程脚本版本号，与本地版本比对
-   - 页面常驻期间每 10 分钟轮询一次；更新探测按 GitHub 代理镜像（ghproxy.net、gh-proxy.com）优先，jsDelivr 各节点与 raw 兜底的顺序轮询，单源超时或失败自动切换，兼顾可达性与版本新鲜度
+   - 页面常驻期间每 10 分钟轮询一次；更新探测按 GitHub 代理镜像 gh-proxy.com、ghproxy.net 优先，jsDelivr 各节点与 raw 兜底的顺序轮询，单源超时或失败自动切换，兼顾可达性与版本新鲜度
    - 发现新版时右下角弹出更新提示条，点击直接打开安装确认页，确认后即覆盖更新
    - 同一新版本只提示一次，升级到最新版后自动清除提示标记，避免反复打扰
 
@@ -217,7 +217,7 @@ flowchart TD
 1. 将脚本头部 `// @version` 按语义化版本递增（如 `2.2.0` → `2.2.1`），界面版本号同步修改
 2. 将更新后的脚本覆盖上传至 `main` 分支
 3. 已安装用户下次打开学习通页面立即探测到新版并收到提示；油猴自身周期也会静默更新
-4. 扩展更新地址优先使用国内可达的 GitHub 代理镜像（直出最新源码，不受 CDN 缓存旧版影响）；jsDelivr CDN 与 raw 作为备用源，页面内探测自动切换
+4. 扩展更新地址使用国内可达的 GitHub 代理镜像（gh-proxy.com 主、ghproxy.net 备，直出最新源码，不受 CDN 缓存旧版影响）；jsDelivr CDN 与 raw 作为备用源，页面内探测自动切换
 
 ---
 
@@ -246,6 +246,14 @@ flowchart TD
 ---
 
 ## 九、更新日志
+
+**v2.2.5（2026-10-29）**
+
+按实测可达性调整更新源优先级：
+
+- 主更新源由 ghproxy.net 对调为 gh-proxy.com（实测当前网络可达且直出最新版），ghproxy.net 降为备用；`@updateURL` / `@downloadURL`、更新提示跳转地址、页面探测第一顺位同步切换
+- 探测顺序：gh-proxy.com → ghproxy.net → fastly / cdn / gcore 等 jsDelivr 节点 → raw，任一源超时自动切换
+- 说明：shturl.cc 等第三方短链或代理若域名无法解析（浏览器报 DNS_PROBE_FINISHED_NXDOMAIN）即不可用，脚本不内置此类地址；请使用 README 给出的镜像链接或手动粘贴最新文件
 
 **v2.2.4（2026-10-29）**
 
