@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         学习通AI助手
 // @namespace    askAuto
-// @version      2.2.4
+// @version      2.2.5
 // @author       XZS
 // @description  学习通AI答题助手，支持DeepSeek/OpenAI/Kimi/智谱GLM/通义千问多模型一键接入
 // @icon         https://vitejs.dev/logo.svg
-// @updateURL    https://ghproxy.net/https://raw.githubusercontent.com/LMCome/xuexitong-ai-assistant/main/xuexitong-ai-assistant.user.js
-// @downloadURL   https://ghproxy.net/https://raw.githubusercontent.com/LMCome/xuexitong-ai-assistant/main/xuexitong-ai-assistant.user.js
+// @updateURL    https://gh-proxy.com/https://raw.githubusercontent.com/LMCome/xuexitong-ai-assistant/main/xuexitong-ai-assistant.user.js
+// @downloadURL   https://gh-proxy.com/https://raw.githubusercontent.com/LMCome/xuexitong-ai-assistant/main/xuexitong-ai-assistant.user.js
 // @match        *://*.chaoxing.com/*
 // @match        *://*.edu.cn/*
 // @match        *://*.nbdlib.cn/*
@@ -852,7 +852,7 @@
 	var _hoisted_25 = { class: "mf-panel-footer" };
 	var _hoisted_26 = { class: "mf-footer-status" };
 	var _hoisted_27 = (0, vue.createElementVNode)("i", null, null, -1);
-	var _hoisted_28 = (0, vue.createElementVNode)("span", { class: "mf-version" }, "v2.2.4 AI", -1);
+	var _hoisted_28 = (0, vue.createElementVNode)("span", { class: "mf-version" }, "v2.2.5 AI", -1);
 	var _hoisted_29 = ["aria-label", "title"];
 	var _hoisted_30 = { class: "mf-launcher-icon" };
 	var _sfc_main = {
@@ -3475,10 +3475,10 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 		}
 	}
 	// ===== 更新检查（打开页面立即探测 + 常驻定时轮询；发现新版一键跳转安装页）=====
-		const UPDATE_CHECK_URL = "https://ghproxy.net/https://raw.githubusercontent.com/LMCome/xuexitong-ai-assistant/main/xuexitong-ai-assistant.user.js";
+		const UPDATE_CHECK_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/LMCome/xuexitong-ai-assistant/main/xuexitong-ai-assistant.user.js";
 		var PROBE_SOURCES = [
-			"https://ghproxy.net/https://raw.githubusercontent.com/LMCome/xuexitong-ai-assistant/main/xuexitong-ai-assistant.user.js",
 			"https://gh-proxy.com/https://raw.githubusercontent.com/LMCome/xuexitong-ai-assistant/main/xuexitong-ai-assistant.user.js",
+			"https://ghproxy.net/https://raw.githubusercontent.com/LMCome/xuexitong-ai-assistant/main/xuexitong-ai-assistant.user.js",
 			"https://fastly.jsdelivr.net/gh/LMCome/xuexitong-ai-assistant@main/xuexitong-ai-assistant.user.js",
 			"https://cdn.jsdelivr.net/gh/LMCome/xuexitong-ai-assistant@main/xuexitong-ai-assistant.user.js",
 			"https://gcore.jsdelivr.net/gh/LMCome/xuexitong-ai-assistant@main/xuexitong-ai-assistant.user.js",
@@ -3563,7 +3563,7 @@ var getAnswers = (questionData, windowz = _unsafeWindow) => {
 
 	var marker = "data-xuexitong-ai-initialized";
 	if (!document.documentElement.hasAttribute(marker)) {
-		document.documentElement.setAttribute(marker, (_GM_info && _GM_info.script && _GM_info.script.version) || "2.2.4");
+		document.documentElement.setAttribute(marker, (_GM_info && _GM_info.script && _GM_info.script.version) || "2.2.5");
 		const { formStore } = mountSettingsApp();
 		allowCopy();
 		await(start(formStore));
